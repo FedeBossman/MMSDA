@@ -1,0 +1,56 @@
+﻿@using MMSDA.Global
+@model IEnumerable<MMSDA.Models.Artist>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 style="display: inline-block;">Artists</h2>
+
+<div class="right-btn">
+@if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+{
+    <a href="@Url.Action("Create")" class="btn btn-primary">
+        <span class="glyphicon glyphicon-plus"></span>
+        Create New
+    </a>
+}
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Albums)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SongsCount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Albums.Count)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SongsCount)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "Details", new { id = item.ArtistID })
+            @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+            {
+                @:|
+                @Html.ActionLink("Edit", "Edit", new { id = item.ArtistID }) @:|
+                @Html.ActionLink("Delete", "Delete", new { id = item.ArtistID })
+            }
+        </td>
+    </tr>
+}
+
+</table>

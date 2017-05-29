@@ -1,0 +1,87 @@
+﻿@using MMSDA.Global;
+@model IEnumerable<MMSDA.Models.Song>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1 class="lead">Mastah Music Super Duper App</h1>
+    <p class="description">
+        This is a website made with MVC5 and published via Microsoft Azure Portal.<br />
+        As a user you can view all the songs, albums and artist and all the information available about them, and save your favorites.<br />
+        To access to the website you can use your Facebook, Twitter, Microsoft or Google account, as well as create a new one in our website.
+    </p>
+</div>
+
+<div class="row">
+    <h2>Featured songs</h2>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Album.Artist)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Album)
+            </th>
+            <th>
+                Votes
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DurationString)
+                </td>
+                <td>
+                    @Html.ActionLink(item.Album.Artist.Name, "Details", "Artist", new { id = item.Album.Artist.ArtistID }, null)
+                </td>
+                <td>
+                    @Html.ActionLink(item.Album.Name, "Details", "Album", new { id = item.Album.AlbumID }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Users.Count)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", "Song", new { id = item.SongID })
+                    @{ var dividerSet = false; }
+                    @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+                    {
+                        @:|
+                        dividerSet = true;
+                        @Html.ActionLink("Edit", "Edit", "Song", new { id = item.SongID }, null) @:|
+                        @Html.ActionLink("Delete", "Delete", "Song", new { id = item.SongID }, null) @:|
+                    }
+                    @if (Request.IsAuthenticated)
+                    {
+                        if (!dividerSet)
+                        {
+                            @:|
+                        }
+                        if (!item.Users.Any(u => u.Id == ViewBag.UserId))
+                        {
+                            @Html.ActionLink("Favorite", "AddFavorite", "Song", new { id = item.SongID }, null)
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Unfavorite", "DeleteFavorite", "Song", new { id = item.SongID }, null)
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

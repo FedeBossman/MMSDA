@@ -1,0 +1,68 @@
+﻿@using MMSDA.Global
+@model MMSDA.Models.Song
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Song</h2>
+
+@if (Request.IsAuthenticated)
+{
+    var btnText = "Unfavorite";
+    var btnHref = Url.Action("DeleteFavorite", "Song", new { id = Model.SongID });
+    if (!Model.Users.Any(u => u.Id == ViewBag.UserId))
+    {
+        btnText = "Favorite";
+        btnHref = Url.Action("AddFavorite", "Song", new { id = Model.SongID });
+    }
+
+    <a href="@btnHref" class="btn btn-info right-btn">
+        <span class="glyphicon glyphicon-heart"></span>
+        @btnText
+    </a>
+}
+
+<div>
+    <h3>@Html.DisplayFor(model => model.Title)</h3>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Duration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DurationString)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Album.Artist)
+        </dt>
+
+        <dd>
+            @Html.ActionLink(Model.Album.Artist.Name, "Details", "Artist", new { id = Model.Album.Artist.ArtistID }, null)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Album)
+        </dt>
+
+        <dd>
+            @Html.ActionLink(Model.Album.Name, "Details", "Album", new { id = Model.Album.AlbumID }, null)
+        </dd>
+
+    </dl>
+
+    <h4>@Html.DisplayNameFor(model => model.Lyrics)</h4>
+    <p>
+        @Html.Raw(Model.Lyrics)
+    </p>
+</div>
+<p>
+    @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.SongID }) @:|
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>

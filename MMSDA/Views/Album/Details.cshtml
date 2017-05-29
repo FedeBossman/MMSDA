@@ -1,0 +1,116 @@
+﻿@using MMSDA.Global
+@model MMSDA.Models.Album
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Album</h2>
+
+<div>
+    <h3>@Html.DisplayFor(model => model.Name)</h3>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Artist)
+        </dt>
+
+        <dd>
+            @Html.ActionLink(Model.Artist.Name, "Details", "Artist", new { id = Model.Artist.ArtistID }, null)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Songs)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Songs.Count)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Duration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Duration)
+        </dd>
+    </dl>
+</div>
+
+<h4>List of songs</h4>
+
+<table class="table">
+    <tr>
+        <th>
+           Title
+        </th>
+        <th>
+            Duration
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Songs)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DurationString)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Song", new { id = item.SongID }, null)
+                @{ var dividerSet = false; }
+                @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+                {
+                    @:|
+                dividerSet = true;
+                    @Html.ActionLink("Edit", "Edit", "Song", new { id = item.SongID }, null) @:|
+                    @Html.ActionLink("Delete", "Delete", "Song", new { id = item.SongID }, null) @:|
+            }
+                @if (Request.IsAuthenticated)
+                {
+                    if (!dividerSet)
+                    {
+                        @:|
+                }
+                    if (!item.Users.Any(u => u.Id == ViewBag.UserId))
+                    {
+                        @Html.ActionLink("Favorite", "AddFavorite", "Song", new { id = item.SongID }, null)
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Unfavorite", "DeleteFavorite", "Song", new { id = item.SongID }, null)
+                    }
+                }
+            </td>
+        </tr>
+                    }
+
+</table>
+
+<p>
+    @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.AlbumID }) @:|
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>

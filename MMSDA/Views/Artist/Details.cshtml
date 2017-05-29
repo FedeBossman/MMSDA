@@ -1,0 +1,88 @@
+﻿@using MMSDA.Global
+@model MMSDA.Models.Artist
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Artist</h2>
+
+<div>
+    <h3>@Html.DisplayFor(model => model.Name)</h3>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Albums)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Albums.Count)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SongsCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SongsCount)
+        </dd>
+
+    </dl>
+</div>
+
+<h4>List of albums</h4>
+
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Duration
+        </th>
+        <th>
+            Genre
+        </th>
+        <th>
+            Year
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Albums)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Album", new { id = item.AlbumID }, null)
+                @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+                {
+                    @:|
+                    @Html.ActionLink("Edit", "Edit", "Album", new { id = item.AlbumID }, null) @:|
+                    @Html.ActionLink("Delete", "Delete", "Album", new { id = item.AlbumID }, null)
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+
+<p>
+    @if (Request.IsAuthenticated && User.IsInRole(WebConfig.adminRole))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ArtistID }) @:|
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>
